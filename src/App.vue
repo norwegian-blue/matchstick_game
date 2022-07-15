@@ -1,5 +1,5 @@
 <template>
-  <h1 class="py-3 mb-4 bg-primary text-white">Matchstick game</h1>
+  <h1 class="py-3 mb-4 bg-primary text-white fw-bold">Matchstick game</h1>
   <Board />
   <Progress />
   <NewGame />
@@ -21,7 +21,7 @@ export default {
 
 <style>
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
+  font-family: Ubuntu, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
