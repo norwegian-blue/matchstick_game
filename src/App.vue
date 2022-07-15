@@ -1,16 +1,20 @@
 <template>
-  <div class="container">
-    <h1 class="py-4">Matchstick game</h1>
-    <Board/>
-  </div>
+  <h1 class="py-3 mb-4 bg-primary text-white">Matchstick game</h1>
+  <Board />
+  <Progress />
+  <NewGame />
 </template>
 
 <script>
-import Board from "./components/Board.vue"
+import Board from "./components/Board.vue";
+import Progress from "./components/Progress.vue";
+import NewGame from "./components/NewGame.vue";
 export default {
   name: 'App',
   components: {
     Board,
+    Progress,
+    NewGame,
   },
 }
 </script>

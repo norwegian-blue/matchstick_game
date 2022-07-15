@@ -1,7 +1,12 @@
 <template>
-    <Match v-for="(match, idx) in this.row"
-        :key="idx"
-    />
+    <div class="container">
+        <div class="row justify-content-center my-2">
+            <Match v-for="(match, idx) in this.row"
+                class="col-1"
+                :key="idx"
+            />
+        </div>
+    </div>
 </template>
 
 <script>
