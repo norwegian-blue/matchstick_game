@@ -1,10 +1,22 @@
 <template>
-  <h1>TODO</h1>
+  <div class="container">
+    <h1 class="py-4">Matchstick game</h1>
+    <Board :size="this.board"/>
+  </div>
 </template>
 
 <script>
+import Board from "./components/Board.vue"
 export default {
   name: 'App',
+  components: {
+    Board,
+  },
+  data() {
+    return {
+      board: [1, 3, 5, 7],
+    }
+  },
 }
 </script>
 
@@ -15,6 +27,8 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  background-color: #e1f0ff;
+  min-height: 100vh;
+  position: relative;
 }
 </style>
