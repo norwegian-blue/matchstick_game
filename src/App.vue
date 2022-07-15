@@ -17,6 +17,9 @@ export default {
       board: [1, 3, 5, 7],
     }
   },
+  mounted() {
+    console.log(this.$store.state)
+  }
 }
 </script>
 
