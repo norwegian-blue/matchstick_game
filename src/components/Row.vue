@@ -1,21 +1,18 @@
 <template>
-    <p>row</p>
-    <img v-for="idx in this.indexes"
+    <Match v-for="(match, idx) in this.row"
         :key="idx"
-        src="match.png"
     />
 </template>
 
 <script>
+import Match from "./Match.vue";
 export default {
     name: "Row",
-    props: {
-        sticks: Number,
+    components: {
+        Match,
     },
-    computed: {
-        indexes() {
-            return [...Array(this.sticks).keys()];
-        },
+    props: {
+        row: Object,
     },
 }
 </script>

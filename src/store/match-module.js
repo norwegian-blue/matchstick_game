@@ -5,7 +5,7 @@ const boardSize = [1, 3, 5, 7];
 const initialState = {
     boardSize: boardSize,
     boardState: gameController.initializeGame(boardSize),
-    move: [],
+    moves: [],
     currentMove: 0,
 }
 

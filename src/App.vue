@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <h1 class="py-4">Matchstick game</h1>
-    <Board :size="this.board"/>
+    <Board/>
   </div>
 </template>
 
@@ -12,14 +12,6 @@ export default {
   components: {
     Board,
   },
-  data() {
-    return {
-      board: [1, 3, 5, 7],
-    }
-  },
-  mounted() {
-    console.log(this.$store.state)
-  }
 }
 </script>
 

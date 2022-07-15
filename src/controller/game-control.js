@@ -1,6 +1,7 @@
 class GameController {
+    // Initialize game status
     initializeGame(boardSize) {
-        return 0;
+        return boardSize.map(n => [...Array(n)].map(() => 1));
     }
 }
 export default new GameController();

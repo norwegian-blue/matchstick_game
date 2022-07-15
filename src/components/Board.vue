@@ -1,8 +1,8 @@
 <template>
     <Row 
-        v-for="(sticks, idx) in size"
+        v-for="(row, idx) in rows"
         :key="idx"
-        :sticks="sticks"
+        :row="row"
     />
 </template>
 
@@ -13,8 +13,10 @@ export default {
     components: {
         Row,
     },
-    props: {
-        size: Object,
-    }
+    computed: {
+        rows() {
+            return this.$store.state.match.boardState;
+        }
+    },
 }
 </script>
