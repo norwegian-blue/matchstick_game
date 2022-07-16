@@ -21,18 +21,22 @@
         </div>
 
         <!-- Player vs PC -->
-        <div class="col-auto row">
-            <div class="form-check text-start col-auto">
+        <div class="col-auto">
+            <div class="form-check text-start row align-items-center">
+                <div class="col-auto">
                 <input class="form-check-input my-1" type="radio" name="radioPlayers" id="radioPvC" value="PvC" v-model="matchModeRadio">
                 <label class="form-check-label" for="radioPvC">
                     Player vs Computer
                 </label>
+                </div>
             </div>
-            <div class="form-check text-start col-auto">
+            <div class="form-check text-start row align-items-center">
+                <div class="col-auto">
                 <input class="form-check-input my-1" type="checkbox" value="" id="checkPfirst" v-model="playerFirstCheck" :disabled="matchModeRadio !== 'PvC'">
                 <label class="form-check-label" for="checkPfirst">
                     Play first turn
                 </label>
+                </div>
             </div>
         </div>
     </form>
@@ -50,8 +54,7 @@ export default {
     },
     methods: {
         startNewGame() {
-            console.log(`Player first? ${this.playerFirstCheck}`);
-            console.log(`Match mode? ${this.matchModeRadio}`)
+            this.$store.dispatch('startNewGame', { mode: this.matchModeRadio, pFirst: this.playerFirstCheck });
         }
     }
 }

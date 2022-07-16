@@ -38,7 +38,7 @@ const store = createStore({
         },
         isWinning(state) {
             return gameController.getValidMoves(state.game.boardState[state.game.currentTurn]).length === 0;
-        }
+        },
     },
     actions: {
         updateMove({ commit, getters }, idx) {
@@ -76,7 +76,23 @@ const store = createStore({
         },
         moveFwd({ commit }) {
             commit('moveForwards');
-        }
+        },
+        startNewGame({ commit }, match) {
+            let players;
+            if (match.mode === 'PvP') {
+                players = ['Player 1', 'Player 2'];
+            } else if (match.mode === 'CvC') {
+                players = ['Computer 1', 'Computer 2'];
+            } else if (match.mode === 'PvC' & match.pFirst) {
+                players = ['Player', 'Computer'];
+            } else {
+                players = ['Computer', 'Player'];
+            }
+            commit('registerNewGame', players);
+        },
+        getPcMove({ commit }) {
+            console.log('todo pc move');
+        },
     },
     mutations: {
         registerMove(state, newMove) {
@@ -107,6 +123,13 @@ const store = createStore({
             } else {
                 state.game.nextMove = [];
             }
+        },
+        registerNewGame(state, players) {
+            state.game.currentTurn = 0;
+            state.game.boardState = gameController.initializeGame(state.game.boardSize);
+            state.game.moves = [];
+            state.game.nextMove = [];
+            state.game.players = players;
         }
     }
 });
