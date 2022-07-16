@@ -35,6 +35,9 @@ const store = createStore({
         },
         currentMove(state) {
             return state.game.nextMove;
+        },
+        isWinning(state) {
+            return gameController.getValidMoves(state.game.boardState[state.game.currentTurn]).length === 0;
         }
     },
     actions: {
@@ -67,6 +70,12 @@ const store = createStore({
             const newState = gameController.getNextState(getters.currentState, getters.currentMove);
             commit('registerNewState', newState);
             return Promise.resolve();
+        },
+        moveBwd({ commit }) {
+            commit('moveBackwards');
+        },
+        moveFwd({ commit }) {
+            commit('moveForwards');
         }
     },
     mutations: {
@@ -78,10 +87,26 @@ const store = createStore({
             }
         },
         registerNewState(state, newState) {
+            // Discard future history (in case of replay)
+            state.game.boardState.splice(state.game.currentTurn+1);
+            state.game.moves.splice(state.game.currentTurn);
+            // Commit new move/state
             state.game.currentTurn += 1;
             state.game.boardState.push(newState);
             state.game.moves.push(state.game.nextMove);
             state.game.nextMove = [];
+        },
+        moveBackwards(state) {
+            state.game.currentTurn -= 1;
+            state.game.nextMove = state.game.moves[state.game.currentTurn];
+        },
+        moveForwards(state) {
+            state.game.currentTurn += 1;
+            if (state.game.moves.length > state.game.currentTurn) {
+                state.game.nextMove = state.game.moves[state.game.currentTurn];
+            } else {
+                state.game.nextMove = [];
+            }
         }
     }
 });

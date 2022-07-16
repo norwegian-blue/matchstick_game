@@ -1,12 +1,16 @@
 <template>
     <div class="my-4">
-        <p class="my-2 fst-italic"> {{ this.$store.getters.currentPlayer }} turn</p>
+        <p class="my-2 fst-italic"> {{ this.$store.getters.currentPlayer }} 
+            <span v-if="this.$store.getters.isWinning"> WON!</span>
+            <span v-else> turn</span>
+        </p>
         
         <div class="row justify-content-center"> 
             <!-- Move back -->
             <button 
                 type="button"
                 class="btn btn-primary col-1"
+                @click="moveBwd"
                 :disabled="this.$store.getters.currentTurn === 0"
             ><font-awesome-icon icon="backward-step"/></button>
 
@@ -15,12 +19,14 @@
                 type="button"
                 class="btn btn-primary col-2 mx-2"
                 @click="nextStep"
+                :disabled="this.$store.getters.isWinning"
             >Next</button>
 
             <!-- Move forward -->
             <button 
                 type="button"
                 class="btn btn-primary col-1"
+                @click="moveFwd"
                 :disabled="this.$store.getters.currentTurn === this.$store.getters.maxTurns"
             ><font-awesome-icon icon="forward-step"/></button>
         </div>
@@ -52,6 +58,12 @@ export default {
                 this.message = err.message;
                 this.loading = false;
             });
+        },
+        moveBwd() {
+            this.$store.dispatch('moveBwd');
+        },
+        moveFwd() {
+            this.$store.dispatch('moveFwd');
         },
     }
 }
