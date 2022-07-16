@@ -3,6 +3,7 @@
         v-for="(row, idx) in rows"
         :key="idx"
         :row="row"
+        :rowIdx="idx"
     />
 </template>
 

@@ -2,8 +2,10 @@
     <div class="container">
         <div class="row justify-content-center my-2">
             <Match v-for="(match, idx) in this.row"
-                class="col-1"
+                class="col-1 px-0 mx-2"
                 :key="idx"
+                :rowIdx="this.rowIdx"
+                :colIdx="idx"
             />
         </div>
     </div>
@@ -17,6 +19,7 @@ export default {
         Match,
     },
     props: {
+        rowIdx: Number,
         row: Object,
     },
 }
