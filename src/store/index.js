@@ -55,10 +55,18 @@ const store = createStore({
                 newMove[1] = getters.currentState[idx.rowIdx].map(() => 0);
                 newMove[1][idx.colIdx] = 1;
             }
+            commit('registerMove', newMove);
+        },
+        updateState({ commit, getters }) {
             // Verify if valid move
-            if (gameController.isValidMove(getters.currentState, newMove)) {
-                commit('registerMove', newMove);
+            if (getters.currentMove.length == 0) {
+                return Promise.reject({ message: "Invalid move: you must burn at least one match!" });
+            } else if (!gameController.isValidMove(getters.currentState, getters.currentMove)) {
+                return Promise.reject({ message: "Invalid move: lit matches must be contiguous!" });
             }
+            const newState = gameController.getNextState(getters.currentState, getters.currentMove);
+            commit('registerNewState', newState);
+            return Promise.resolve();
         }
     },
     mutations: {
@@ -68,6 +76,12 @@ const store = createStore({
             } else {
                 state.game.nextMove = newMove;
             }
+        },
+        registerNewState(state, newState) {
+            state.game.currentTurn += 1;
+            state.game.boardState.push(newState);
+            state.game.moves.push(state.game.nextMove);
+            state.game.nextMove = [];
         }
     }
 });

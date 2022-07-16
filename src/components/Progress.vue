@@ -11,7 +11,11 @@
             ><font-awesome-icon icon="backward-step"/></button>
 
             <!-- Commit current move -->
-            <button type="button" class="btn btn-primary col-2 mx-2">Next</button>
+            <button
+                type="button"
+                class="btn btn-primary col-2 mx-2"
+                @click="nextStep"
+            >Next</button>
 
             <!-- Move forward -->
             <button 
@@ -20,14 +24,35 @@
                 :disabled="this.$store.getters.currentTurn === this.$store.getters.maxTurns"
             ><font-awesome-icon icon="forward-step"/></button>
         </div>
+        
+        <div v-if="message" class="alert alert-danger p-3 mt-4 mb-0 mx-auto" style="width:fit-content" role="alert">
+            {{ message }} 
+        </div>
     </div>
 </template>
 
 <script>
 export default {
     name: "Progress",
-    mounted() {
-        //console.log(this.$store.getters.maxTurns)
+    data() {
+        return {
+            message: "",
+            loading: false,
+        }
+    },
+    methods: {
+        nextStep() {
+            this.loading = true;
+            this.$store.dispatch('updateState')
+            .then(()=> {
+                this.message = "";
+                this.loading = false;
+            })
+            .catch(err => {
+                this.message = err.message;
+                this.loading = false;
+            });
+        },
     }
 }
 </script>
