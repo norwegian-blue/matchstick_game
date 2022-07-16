@@ -4,7 +4,10 @@
             <span v-if="this.$store.getters.isWinning"> WON!</span>
             <span v-else> turn</span>
         </p>
-        <span v-show="pcRunning">PC is thinking...</span>
+        <div v-show="pcRunning" class="mb-3">
+            <span class="spinner-border spinner-border-sm"/>
+            <span class="fst-italic"> PC is thinking...</span>
+        </div>
         
         <div class="row justify-content-center"> 
             <!-- Move back -->
@@ -20,7 +23,7 @@
                 type="button"
                 class="btn btn-primary col-2 mx-2"
                 @click="nextStep"
-                :disabled="this.$store.getters.isWinning || this.loading"
+                :disabled="this.$store.getters.isWinning || this.loading || this.pcRunning"
             >
                 <span class="spinner-border spinner-border-sm" v-show="loading"> </span>
                 Next
@@ -56,17 +59,17 @@ export default {
             return this.$store.state.game.players; 
         },
         isPcTurn() {
-            return this.$store.getters.currentPlayer.startsWith('Computer') && this.$store.getters.currentMove.length === 0;
+            return this.$store.getters.isPcTurn;
         },
     },
     watch: {
         reset () {
             this.message = "";
-        }
-    },
-    updated() {
-        if (this.isPcTurn) {
-            this.getPcMove();
+        },
+        isPcTurn(pcTurn) {
+            if (pcTurn) {
+                this.getPcMove();
+            }
         }
     },
     methods: {
@@ -88,8 +91,10 @@ export default {
         moveFwd() {
             this.$store.dispatch('moveFwd');
         },
-        getPcMove() {
-            this.$store.dispatch('getPcMove');
+        async getPcMove() {
+            this.pcRunning = true;
+            await this.$store.dispatch('getPcMove');
+            this.pcRunning = false;
         },
     }
 }
