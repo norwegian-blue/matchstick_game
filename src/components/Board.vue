@@ -15,7 +15,7 @@ export default {
     },
     computed: {
         rows() {
-            return this.$store.state.match.boardState;
+            return this.$store.getters.currentState;
         }
     },
 }
