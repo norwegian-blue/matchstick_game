@@ -1,5 +1,13 @@
 import gameController from "../controller/game-control"
 
+function flipState(state) {
+    return state.map(e => e.slice().reverse());
+}
+
+function flipMove(move) {
+    return move.slice().reverse();
+}
+
 // Wrapper
 function minimax(boardState, prize) {
     return minimaxMemo()(boardState, prize, true);
@@ -16,10 +24,14 @@ function minimaxMemo() {
             return [prize, []];
         }
 
-        // See if cached solution
+        // See if cached solution or mirror
         const cached = cache[JSON.stringify(boardState)];
-        if (cached) {
-            return [cached[1]*(prize-cached[0]), cached[2]];
+        const cachedMirr = cache[JSON.stringify(flipState(boardState))];
+        if (cached || cachedMirr) {
+            const validCache = cached ? cached : cachedMirr;
+            const cachedValue = validCache[1]*(prize-validCache[0]);
+            const cachedMove = cached ? validCache[2] : flipMove(validCache[2]);
+            return maximizingPlayer ? [cachedValue, cachedMove] : [-cachedValue, cachedMove];
         }
 
         // Get available moves
@@ -37,7 +49,7 @@ function minimaxMemo() {
                     bestMove = move;
                 } 
             }
-            cache[JSON.stringify(boardState)] = [prize - Math.abs(value), -Math.sign(value), bestMove];
+            cache[JSON.stringify(boardState)] = [prize - Math.abs(value), Math.sign(value), bestMove];
             return [value, bestMove];
 
         } else {
@@ -51,7 +63,7 @@ function minimaxMemo() {
                     bestMove = move;
                 } 
             }
-            cache[JSON.stringify(boardState)] = [prize - Math.abs(value), Math.sign(value), bestMove];
+            cache[JSON.stringify(boardState)] = [prize - Math.abs(value), -Math.sign(value), bestMove];
             return [value, bestMove];
         }
     };
