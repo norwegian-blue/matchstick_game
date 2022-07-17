@@ -2,7 +2,7 @@ import { createStore } from "vuex";
 import gameController from "../controller/game-control";
 import pcPlayer from "../controller/pc-player";
 
-const boardSize = [1, 3, 5, 7];
+const boardSize = [1, 3, 5];
 
 const initialState = {
     boardSize: boardSize,
@@ -37,8 +37,8 @@ const store = createStore({
         currentMove(state) {
             return state.game.nextMove;
         },
-        isWinning(state) {
-            return gameController.getValidMoves(state.game.boardState[state.game.currentTurn]).length === 0;
+        isWinning(state, getters) {
+            return gameController.isWinningState(getters.currentState);
         },
         isPcTurn(state, getters) {
             return getters.currentPlayer.startsWith('Computer') &&
@@ -96,8 +96,10 @@ const store = createStore({
             }
             commit('registerNewGame', players);
         },
-        async getPcMove({ commit, getters }) {
-            const nextMove = await pcPlayer.getRandomNextMove(getters.currentState);
+        async getPcMove({ commit, getters, state }) {
+            //const nextMove = await pcPlayer.getRandomNextMove(getters.currentState);
+            const nextMove = await pcPlayer.getBestNextMove(getters.currentState);
+
             if (nextMove) {
                 commit('registerMove', nextMove);
             }
