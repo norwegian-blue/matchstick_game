@@ -1,44 +1,61 @@
 import gameController from "../controller/game-control"
 
-// Minimax algorithm
-function minimax(boardState, prize, maximizingPlayer) {
-    // Terminal condition
-    if (gameController.isWinningState(boardState)) {
-        prize = maximizingPlayer ? prize : -prize;
-        return [prize, []];
-    }
+// Wrapper
+function minimax(boardState, prize) {
+    return minimaxMemo()(boardState, prize, true);
+}
 
-    // Get available moves
-    const moves = gameController.getValidMoves(boardState)
+// Minimax algorithm with memoization
+function minimaxMemo() {
+    let cache = {};
 
-    // Maximizing player
-    let bestMove;
-    if (maximizingPlayer) {
-        let value = -Infinity;
-        for (const move of moves) {
-            const childState = gameController.getNextState(boardState, move);
-            const subSol = minimax(childState, prize-1, false);
-            if (subSol[0] > value) {
-                value = subSol[0];
-                bestMove = move;
-            } 
+    return function _minimax(boardState, prize, maximizingPlayer) {
+        // Terminal condition
+        if (gameController.isWinningState(boardState)) {
+            prize = maximizingPlayer ? prize : -prize;
+            return [prize, []];
         }
-        return [value, bestMove];
 
-    } else {
-    // Minimizing player
-        let value = Infinity;
-        for (const move of moves) {
-            const childState = gameController.getNextState(boardState, move);
-            const subSol = minimax(childState, prize-1, true);
-            if (subSol[0] < value) {
-                value = subSol[0];
-                bestMove = move;
-            } 
+        // See if cached solution
+        const cached = cache[JSON.stringify(boardState)];
+        if (cached) {
+            return [cached[1]*(prize-cached[0]), cached[2]];
         }
-        return [value, bestMove];
-    }
-};
+
+        // Get available moves
+        const moves = gameController.getValidMoves(boardState)
+
+        // Maximizing player
+        let bestMove;
+        if (maximizingPlayer) {
+            let value = -Infinity;
+            for (const move of moves) {
+                const childState = gameController.getNextState(boardState, move);
+                const subSol = _minimax(childState, prize-1, false);
+                if (subSol[0] > value) {
+                    value = subSol[0];
+                    bestMove = move;
+                } 
+            }
+            cache[JSON.stringify(boardState)] = [prize - Math.abs(value), -Math.sign(value), bestMove];
+            return [value, bestMove];
+
+        } else {
+        // Minimizing player
+            let value = Infinity;
+            for (const move of moves) {
+                const childState = gameController.getNextState(boardState, move);
+                const subSol = _minimax(childState, prize-1, true);
+                if (subSol[0] < value) {
+                    value = subSol[0];
+                    bestMove = move;
+                } 
+            }
+            cache[JSON.stringify(boardState)] = [prize - Math.abs(value), Math.sign(value), bestMove];
+            return [value, bestMove];
+        }
+    };
+}
 
 function sleep(time) {
     return new Promise(resolve => setTimeout(resolve, time));
@@ -59,7 +76,7 @@ class PcPlayer {
         let size = boardStatus.flat().flat().length;
 
         // get best move/score
-        const solution = minimax(boardStatus, size+1, true) 
+        const solution = minimax(boardStatus, size+1) 
         return solution[1];
     }
 }
