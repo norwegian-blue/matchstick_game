@@ -52,7 +52,7 @@ function getMoveForTransition(startState, destGenState) {
 
 // Minimax wrapper
 function minimax(boardState, prize) {
-    return minimaxMemo()(boardState, prize, true);
+    return minimaxMemo()(toGenericState(boardState), prize, true);
 }
 
 // Minimax algorithm with memoization
@@ -61,7 +61,7 @@ function minimaxMemo() {
 
     return function _minimax(boardState, prize, maximizingPlayer) {
         // Terminal condition
-        if (gameController.isWinningState(boardState)) {
+        if (boardState.length === 0) {
             prize = maximizingPlayer ? prize : -prize;
             return [prize, []];
         }
@@ -75,18 +75,17 @@ function minimaxMemo() {
         }
 
         // Get available moves
-        const moves = gameController.getValidMoves(boardState)
+        const nextStates = getNextGenStates(boardState);
 
         // Maximizing player
         let bestMove;
         if (maximizingPlayer) {
             let value = -Infinity;
-            for (const move of moves) {
-                const childState = gameController.getNextState(boardState, move);
+            for (const childState of nextStates) {
                 const subSol = _minimax(childState, prize-1, false);
                 if (subSol[0] > value) {
                     value = subSol[0];
-                    bestMove = move;
+                    bestMove = childState;
                 } 
             }
             cache[JSON.stringify(boardState)] = [prize - Math.abs(value), Math.sign(value), bestMove];
@@ -95,12 +94,11 @@ function minimaxMemo() {
         } else {
         // Minimizing player
             let value = Infinity;
-            for (const move of moves) {
-                const childState = gameController.getNextState(boardState, move);
+            for (const childState of nextStates) {
                 const subSol = _minimax(childState, prize-1, true);
                 if (subSol[0] < value) {
                     value = subSol[0];
-                    bestMove = move;
+                    bestMove = childState;
                 } 
             }
             cache[JSON.stringify(boardState)] = [prize - Math.abs(value), -Math.sign(value), bestMove];
@@ -129,7 +127,7 @@ class PcPlayer {
 
         // get best move/score
         const solution = minimax(boardStatus, size+1) 
-        return solution[1];
+        return getMoveForTransition(boardStatus, solution[1]);
     }
 }
 export default new PcPlayer();
