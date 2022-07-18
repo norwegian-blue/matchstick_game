@@ -95,6 +95,7 @@ export default {
             this.pcRunning = true;
             await this.$store.dispatch('getPcMove');
             this.pcRunning = false;
+            this.nextStep();
         },
     }
 }

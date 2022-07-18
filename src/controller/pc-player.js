@@ -1,14 +1,31 @@
 import gameController from "../controller/game-control"
 
-function flipState(state) {
-    return state.map(e => e.slice().reverse());
-}
+// Split array at zeros
+function splitAtZero(v) {
+    const idx = v.findIndex(e => e === 0);
+    if (idx < 0) {
+        return [v];
+    }
+    const v1 = v.slice(0, idx);
+    const v2 = v.slice(idx+1);
+    return [v1].concat(splitAtZero(v2)).filter(e => e.length !== 0);
+};
 
-function flipMove(move) {
-    return move.slice().reverse();
-}
+// Translate board state to generic state
+function toGenericState(state) {
+    return state.map(r => splitAtZero(r)).flat()            // split separate groups in rows
+                .map(e => e.reduce((s, e1) => s+e1, 0))     // get each separate group's length
+                .sort()                                     // sort by ascending length
+};
 
-// Wrapper
+// Get move that transitions from basic state to target generic state
+function getMoveForTransition(startState, destGenState) {
+    const moves = gameController.getValidMoves(startState);
+    const map2nextGeneric = (m) => toGenericState(gameController.getNextState(startState, m));          // Go to next generic state
+    return moves.filter(m => JSON.stringify(map2nextGeneric(m)) === JSON.stringify(destGenState))[0];   // Filter for desired transition
+};
+
+// Minimax wrapper
 function minimax(boardState, prize) {
     return minimaxMemo()(boardState, prize, true);
 }
@@ -26,11 +43,9 @@ function minimaxMemo() {
 
         // See if cached solution or mirror
         const cached = cache[JSON.stringify(boardState)];
-        const cachedMirr = cache[JSON.stringify(flipState(boardState))];
-        if (cached || cachedMirr) {
-            const validCache = cached ? cached : cachedMirr;
-            const cachedValue = validCache[1]*(prize-validCache[0]);
-            const cachedMove = cached ? validCache[2] : flipMove(validCache[2]);
+        if (cached) {
+            const cachedValue = cached[1]*(prize-cached[0]);
+            const cachedMove = cached[2];
             return maximizingPlayer ? [cachedValue, cachedMove] : [-cachedValue, cachedMove];
         }
 
