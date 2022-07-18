@@ -2,7 +2,7 @@ import { createStore } from "vuex";
 import gameController from "../controller/game-control";
 import pcPlayer from "../controller/pc-player";
 
-const boardSize = [1, 3, 5, 7];
+const boardSize = [1];
 
 const initialState = {
     boardSize: boardSize,

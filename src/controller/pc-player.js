@@ -18,6 +18,31 @@ function toGenericState(state) {
                 .sort()                                     // sort by ascending length
 };
 
+// Get next generic states
+function getNextGenStates(state) {
+    return state.map((g, idx) => getNextGroups(g)                        // all next groups from one group
+                .map(s => s.concat(state.filter((e, i) => i !== idx)))   // + remaining groups
+                .map(e => e.flat()))                                     // flat out and remove zeros
+                .flat().map(s => s.filter(e => e >0).sort());
+}
+
+// Get next all possible next groups from a group of n matches
+function getNextGroups(n) {
+    if (n == 1) {
+        return [[0]];
+    }
+    return getPairSum(n-1).concat(getNextGroups(n-1));
+};
+
+// Get all unique pair of numbers for which sum is n
+function getPairSum(n) {
+    let pairs = [];
+    for (let k = 0; k < Math.ceil((n+1)/2); k++) {
+        pairs.push([k, n-k]);
+    }
+    return pairs;
+}
+
 // Get move that transitions from basic state to target generic state
 function getMoveForTransition(startState, destGenState) {
     const moves = gameController.getValidMoves(startState);
